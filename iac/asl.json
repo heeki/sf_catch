@@ -1,0 +1,53 @@
+{
+  "Comment": "Prototype",
+  "StartAt": "T1",
+  "States": {
+    "T1": {
+      "Type": "Task",
+      "Resource": "${Fn}",
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.TaskFailed"
+          ],
+          "ResultPath": "$.error",
+          "Next": "HandleCause"
+        }
+      ],
+      "End": true
+    },
+    "HandleCause": {
+      "Type": "Pass",
+      "Parameters": {
+        "parsedCause.$": "States.StringToJson($.error.Cause)"
+      },
+      "Next": "HandleErrorMessage"
+    },
+    "HandleErrorMessage": {
+      "Type": "Pass",
+      "Parameters": {
+        "parsedErrorMessage.$": "States.StringToJson($.parsedCause.errorMessage)"
+      },
+      "Next": "Choice"
+    },
+    "Choice": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.parsedErrorMessage.t1.state",
+          "StringEquals": "FAILED",
+          "Next": "T3"
+        }
+      ],
+      "Default": "T4"
+    },
+    "T3": {
+      "Type": "Pass",
+      "End": true
+    },
+    "T4": {
+      "Type": "Pass",
+      "End": true
+    }
+  }
+}
