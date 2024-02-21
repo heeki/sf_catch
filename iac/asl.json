@@ -1,53 +1,95 @@
 {
   "Comment": "Prototype",
-  "StartAt": "T1",
+  "StartAt": "T0",
   "States": {
-    "T1": {
+    "T0": {
       "Type": "Task",
       "Resource": "${Fn}",
+      "Parameters": {
+        "source": "t0",
+        "status.$": "$.status"
+      },
       "Catch": [
         {
           "ErrorEquals": [
             "States.TaskFailed"
           ],
           "ResultPath": "$.error",
-          "Next": "HandleCause"
+          "Next": "HandleCause-T0"
         }
       ],
       "End": true
     },
-    "HandleCause": {
+    "HandleCause-T0": {
       "Type": "Pass",
       "Parameters": {
+        "status.$": "$.status",
         "parsedCause.$": "States.StringToJson($.error.Cause)"
       },
-      "Next": "HandleErrorMessage"
+      "Next": "HandleErrorMessage-T0"
     },
-    "HandleErrorMessage": {
+    "HandleErrorMessage-T0": {
       "Type": "Pass",
       "Parameters": {
+        "status.$": "$.status",
         "parsedErrorMessage.$": "States.StringToJson($.parsedCause.errorMessage)"
       },
-      "Next": "Choice"
+      "Next": "DependencyConditionCheck-T0"
     },
-    "Choice": {
+    "DependencyConditionCheck-T0": {
       "Type": "Choice",
       "Choices": [
         {
-          "Variable": "$.parsedErrorMessage.t1.state",
+          "Variable": "$.parsedErrorMessage.t0.state",
           "StringEquals": "FAILED",
-          "Next": "T3"
+          "Next": "T1"
         }
       ],
-      "Default": "T4"
+      "Default": "Success"
     },
-    "T3": {
-      "Type": "Pass",
-      "End": true
+    "T1": {
+      "Type": "Task",
+      "Resource": "${Fn}",
+      "Parameters": {
+        "source": "t1",
+        "status.$": "$.status"
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.TaskFailed"
+          ],
+          "ResultPath": "$.error",
+          "Next": "HandleCause-T1"
+        }
+      ],
+      "ResultSelector": {
+        "status.$": "States.StringToJson($)"
+      },
+      "OutputPath": "$",
+      "Next": "Success"
     },
-    "T4": {
+    "HandleCause-T1": {
       "Type": "Pass",
-      "End": true
+      "Parameters": {
+        "status.$": "$.status",
+        "parsedCause.$": "States.StringToJson($.error.Cause)"
+      },
+      "Next": "HandleErrorMessage-T1"
+    },
+    "HandleErrorMessage-T1": {
+      "Type": "Pass",
+      "Parameters": {
+        "status.$": "$.status",
+        "parsedErrorMessage.$": "States.StringToJson($.parsedCause.errorMessage)"
+      },
+      "Next": "Failure"
+    },
+    "Success": {
+      "Type": "Succeed"
+    },
+    "Failure": {
+      "Type": "Fail"
     }
   }
 }

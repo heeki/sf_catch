@@ -78,7 +78,7 @@ Resources:
   SFnLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: "/aws/sf/sf-adobe"
+      LogGroupName: "/aws/sf/sf-catch"
       RetentionInDays: 7
   # Lambda
   FnRole:

@@ -11,6 +11,11 @@ class ExampleException(Exception):
 
 def handler(event, context):
     print(json.dumps(event))
-    if event.get("status") is not None:
-        raise ExampleException(event["status"])
-    return event
+    source = event.get("source")
+    status = event.get("status")
+    if source is not None and status is not None:
+        data = json.loads(status)
+        result = data[source]["state"]
+        if result == "FAILED":
+            raise ExampleException(event["status"])
+    return json.dumps(event["status"])
