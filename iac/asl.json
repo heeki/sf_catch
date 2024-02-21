@@ -1,8 +1,19 @@
 {
   "Comment": "Prototype",
-  "StartAt": "T0",
+  "StartAt": "TypeSelector",
   "States": {
-    "T0": {
+    "TypeSelector": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.type",
+          "StringEquals": "parallel",
+          "Next": "MapParallel"
+        }
+      ],
+      "Default": "DefaultSerial-T0"
+    },
+    "DefaultSerial-T0": {
       "Type": "Task",
       "Resource": "${Fn}",
       "Parameters": {
@@ -89,7 +100,57 @@
       "Type": "Succeed"
     },
     "Failure": {
-      "Type": "Fail"
+      "Type": "Fail",
+      "Error": "Downstream task failed",
+      "CausePath": "$.status"
+    },
+    "MapParallel": {
+      "Type": "Map",
+      "ItemsPath": "$.tasks",
+      "ItemProcessor": {
+        "ProcessorConfig": {
+          "Mode": "INLINE"
+        },
+        "StartAt": "P0",
+        "States": {
+          "P0": {
+            "Type": "Task",
+            "Resource": "${Fn}",
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.TaskFailed"
+                ],
+                "ResultPath": "$.error",
+                "Next": "HandleCause-P0"
+              }
+            ],
+            "End": true
+          },
+          "HandleCause-P0": {
+            "Type": "Pass",
+            "Parameters": {
+              "status.$": "$.status",
+              "parsedCause.$": "States.StringToJson($.error.Cause)"
+            },
+            "Next": "HandleErrorMessage-P0"
+          },
+          "HandleErrorMessage-P0": {
+            "Type": "Pass",
+            "Parameters": {
+              "status.$": "$.status",
+              "parsedErrorMessage.$": "States.StringToJson($.parsedCause.errorMessage)"
+            },
+            "Next": "MapFailure"
+          },
+          "MapFailure": {
+            "Type": "Fail",
+            "Error": "Downstream task failed",
+            "CausePath": "$.status"
+          }
+        }
+      },
+      "End": true
     }
   }
 }
