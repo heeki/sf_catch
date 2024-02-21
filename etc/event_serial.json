@@ -1,0 +1,4 @@
+{
+    "type": "serial",
+    "status": "{\"t0\":{\"state\":\"FAILED\"}, \"t1\":{\"state\":\"SUCCESS\"}}"
+}

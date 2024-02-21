@@ -5,6 +5,8 @@ tmp
 
 # files
 etc/*.json
+!etc/event_parallel.json
+!etc/event_serial.json
 etc/*.sh
 *_output.yaml
 build.toml

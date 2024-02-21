@@ -1,0 +1,14 @@
+{
+    "type": "parallel",
+    "tasks": [
+        {"source": "p0", "status": "{\"p0\":{\"state\":\"SUCCESS\"}}"},
+        {"source": "p1", "status": "{\"p1\":{\"state\":\"SUCCESS\"}}"},
+        {"source": "p2", "status": "{\"p2\":{\"state\":\"SUCCESS\"}}"},
+        {"source": "p3", "status": "{\"p3\":{\"state\":\"SUCCESS\"}}"},
+        {"source": "p4", "status": "{\"p4\":{\"state\":\"SUCCESS\"}}"},
+        {"source": "p5", "status": "{\"p5\":{\"state\":\"SUCCESS\"}}"},
+        {"source": "p6", "status": "{\"p6\":{\"state\":\"SUCCESS\"}}"},
+        {"source": "p7", "status": "{\"p7\":{\"state\":\"SUCCESS\"}}"},
+        {"source": "p8", "status": "{\"p8\":{\"state\":\"FAILED\"}}"}
+    ]
+}
