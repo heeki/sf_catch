@@ -21,6 +21,8 @@ sf.invoke:
 	aws --profile ${PROFILE} stepfunctions start-execution --state-machine-arn ${O_SF_ARN} --input file://etc/event.json | jq
 sf.list-executions:
 	aws --profile ${PROFILE} stepfunctions list-executions --state-machine-arn ${O_SF_ARN} | jq
+sf.redrive-execution:
+	aws --profile ${PROFILE} stepfunctions redrive-execution --execution-arn ${O_SF_EXEC_ARN} | jq
 
 cdk.synth:
 	cd iac/cdk && cdk synth ${CDK_PARAMS}
