@@ -21,6 +21,8 @@ sf.invoke:
 	aws --profile ${PROFILE} stepfunctions start-execution --state-machine-arn ${O_SF_ARN} --input file://etc/event.json | jq
 sf.list-executions:
 	aws --profile ${PROFILE} stepfunctions list-executions --state-machine-arn ${O_SF_ARN} | jq
+sf.get-execution-history:
+	aws --profile ${PROFILE} stepfunctions get-execution-history --execution-arn ${O_SF_EXEC_ARN} --include-execution-data | tee tmp/execution_history.json | jq
 sf.redrive-execution:
 	aws --profile ${PROFILE} stepfunctions redrive-execution --execution-arn ${O_SF_EXEC_ARN} | jq
 
